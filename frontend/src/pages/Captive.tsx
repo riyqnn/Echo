@@ -149,7 +149,7 @@ const CaptivePortal = () => {
               <div className="grid grid-cols-2 gap-2 mt-3">
                 <div className="bg-white p-2 border-2 border-black">
                   <div className="text-xs font-bold text-gray-600">PRICE/MB</div>
-                  <div className="font-black text-sm">{formatPrice(currentHotspot.pricePerMB)} ETH</div>
+                  <div className="font-black text-sm">{formatPrice(currentHotspot.pricePerMB)} U2U</div>
                 </div>
                 <div className="bg-white p-2 border-2 border-black">
                   <div className="text-xs font-bold text-gray-600">HOTSPOT ID</div>

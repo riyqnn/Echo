@@ -1,12 +1,21 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Wifi, Power, DollarSign, MapPin, Users, TrendingUp, Settings, AlertCircle, Loader2, CheckCircle, Plus, Eye, BarChart3, Zap, X } from 'lucide-react';
 import { useWifiRegistry } from '../hooks/useWifiRegistry';
 import { useAccount } from 'wagmi';
 
+// Define Hotspot type
+interface Hotspot {
+  id: bigint | number;
+  ssid: string;
+  location: string;
+  pricePerMB: bigint | number;
+  active: boolean;
+  owner: string;
+}
+
 function MyHotspot() {
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const {
-    hotspots,
     getUserHotspots,
     isLoading,
     error,
@@ -17,9 +26,9 @@ function MyHotspot() {
     formatPrice
   } = useWifiRegistry();
 
-  const [toggleSuccess, setToggleSuccess] = useState(null);
+  const [toggleSuccess, setToggleSuccess] = useState<number | bigint | null>(null);
   const [withdrawSuccess, setWithdrawSuccess] = useState(false);
-  const [selectedHotspot, setSelectedHotspot] = useState(null);
+  const [selectedHotspot, setSelectedHotspot] = useState<Hotspot | null>(null);
 
   const userHotspots = getUserHotspots();
 
@@ -37,7 +46,7 @@ function MyHotspot() {
     return { total, active, inactive, totalValue };
   }, [userHotspots]);
 
-  const handleToggleActive = async (hotspotId, currentStatus) => {
+  const handleToggleActive = async (hotspotId: number | bigint, currentStatus: boolean) => {
     try {
       await setHotspotActive(Number(hotspotId), !currentStatus);
       setToggleSuccess(hotspotId);
@@ -276,7 +285,7 @@ function MyHotspot() {
                         <span className="text-sm text-black font-bold uppercase">PRICE/MB</span>
                       </div>
                       <span className="text-lg font-black text-black p-2 bg-white border-2 border-black shadow-brutal block text-center">
-                        {formatPrice(hotspot.pricePerMB)} ETH
+                        {formatPrice(hotspot.pricePerMB)} U2U
                       </span>
                     </div>
 
@@ -387,7 +396,7 @@ function MyHotspot() {
                 <div className="flex justify-between items-center py-3 border-b-3 border-black">
                   <span className="text-black font-bold uppercase">PRICE PER MB:</span>
                   <span className="text-black font-black p-2 bg-yellow-200 border-3 border-black">
-                    {formatPrice(selectedHotspot.pricePerMB)} ETH
+                    {formatPrice(selectedHotspot.pricePerMB)} U2U
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-3 border-b-3 border-black">

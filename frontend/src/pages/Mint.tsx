@@ -161,7 +161,7 @@ function Mint() {
                 <div>
                   <label className="block text-black font-bold uppercase tracking-wide mb-3 flex items-center gap-2">
                     <DollarSign className="w-4 h-4 border-2 border-black rounded p-0.5" />
-                    PRICE PER MB (ETH)
+                    PRICE PER MB (U2U)
                   </label>
                   <input
                     type="number"
@@ -174,7 +174,7 @@ function Mint() {
                     required
                   />
                   <p className="text-xs mt-3 text-gray-600 font-bold uppercase tracking-wide">
-                    RECOMMENDED: 0.001 - 0.01 ETH/MB
+                    RECOMMENDED: 0.001 - 0.01 U2U/MB
                   </p>
                 </div>
 
@@ -239,7 +239,7 @@ function Mint() {
                       <p className="text-black font-black uppercase tracking-wide">PASSIVE INCOME</p>
                     </div>
                     <p className="text-gray-600 text-sm font-mono">
-                      Earn ETH when users purchase access to your WiFi
+                      Earn U2U when users purchase access to your WiFi
                     </p>
                   </div>
                   <div className="p-4 bg-gray-50 border-4 border-black shadow-brutal">
@@ -295,15 +295,15 @@ function Mint() {
                 <div className="space-y-4">
                   <div className="p-4 bg-gray-50 border-4 border-black shadow-brutal flex justify-between items-center">
                     <span className="text-black font-bold uppercase tracking-wide">BASIC WIFI</span>
-                    <span className="text-black font-black p-2 bg-green-200 border-3 border-black shadow-brutal">0.001 ETH/MB</span>
+                    <span className="text-black font-black p-2 bg-green-200 border-3 border-black shadow-brutal">0.001 U2U/MB</span>
                   </div>
                   <div className="p-4 bg-gray-50 border-4 border-black shadow-brutal flex justify-between items-center">
                     <span className="text-black font-bold uppercase tracking-wide">PREMIUM WIFI</span>
-                    <span className="text-black font-black p-2 bg-yellow-200 border-3 border-black shadow-brutal">0.005 ETH/MB</span>
+                    <span className="text-black font-black p-2 bg-yellow-200 border-3 border-black shadow-brutal">0.005 U2U/MB</span>
                   </div>
                   <div className="p-4 bg-gray-50 border-4 border-black shadow-brutal flex justify-between items-center">
                     <span className="text-black font-bold uppercase tracking-wide">ULTRA-FAST WIFI</span>
-                    <span className="text-black font-black p-2 bg-red-200 border-3 border-black shadow-brutal">0.01 ETH/MB</span>
+                    <span className="text-black font-black p-2 bg-red-200 border-3 border-black shadow-brutal">0.01 U2U/MB</span>
                   </div>
                 </div>
               </div>

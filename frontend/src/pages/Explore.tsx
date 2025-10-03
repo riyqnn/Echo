@@ -1,6 +1,14 @@
-import React, { useState, useMemo } from 'react';
-import { Search, MapPin, Wifi, Zap, Clock, Filter, Star, Shield, AlertCircle, Loader2, CheckCircle, X } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Search, MapPin, Wifi, Zap, Star, Shield, AlertCircle, Loader2, CheckCircle, X } from 'lucide-react';
 import { useWifiRegistry } from '../hooks/useWifiRegistry';
+
+interface Hotspot {
+  id: bigint;
+  ssid: string;
+  location: string;
+  pricePerMB: bigint;
+  active: boolean;
+}
 
 function Explore() {
   const {
@@ -16,14 +24,14 @@ function Explore() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterActive, setFilterActive] = useState('all');
   const [sortBy, setSortBy] = useState('price');
-  const [selectedHotspot, setSelectedHotspot] = useState(null);
+  const [selectedHotspot, setSelectedHotspot] = useState<Hotspot | null>(null);
   const [quotaMB, setQuotaMB] = useState(100);
-  const [duration, setDuration] = useState(3600); // 1 hour
-  const [purchaseSuccess, setPurchaseSuccess] = useState(null);
+  const [duration, setDuration] = useState(3600);
+  const [purchaseSuccess, setPurchaseSuccess] = useState<bigint | null>(null);
 
   // Filter and sort hotspots
   const filteredHotspots = useMemo(() => {
-    let filtered = hotspots.filter(hotspot => {
+    const filtered = hotspots.filter(hotspot => {
       const matchesSearch = hotspot.ssid.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            hotspot.location.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesFilter = filterActive === 'all' || 
@@ -49,9 +57,9 @@ function Explore() {
     return filtered;
   }, [hotspots, searchTerm, filterActive, sortBy]);
 
-  const handleBuyAccess = async (hotspotId) => {
+  const handleBuyAccess = async (hotspotId: bigint) => {
     try {
-      const hash = await buyAccess(Number(hotspotId), quotaMB, duration);
+      await buyAccess(Number(hotspotId), quotaMB, duration);
       setPurchaseSuccess(hotspotId);
       setSelectedHotspot(null);
       setTimeout(() => setPurchaseSuccess(null), 3000);
@@ -60,7 +68,7 @@ function Explore() {
     }
   };
 
-  const formatDuration = (seconds) => {
+  const formatDuration = (seconds: number) => {
     if (seconds < 3600) return `${Math.floor(seconds / 60)} MIN`;
     if (seconds < 86400) return `${Math.floor(seconds / 3600)} HOUR${Math.floor(seconds / 3600) > 1 ? 'S' : ''}`;
     return `${Math.floor(seconds / 86400)} DAY${Math.floor(seconds / 86400) > 1 ? 'S' : ''}`;
@@ -146,7 +154,7 @@ function Explore() {
                     {hotspots.length > 0 ? 
                       `${parseFloat(formatPrice(
                         hotspots.reduce((sum, h) => sum + h.pricePerMB, BigInt(0)) / BigInt(hotspots.length)
-                      )).toFixed(4)} ETH/MB` : '0 ETH/MB'}
+                      )).toFixed(4)} U2U/MB` : '0 U2U/MB'}
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-purple-500 border-4 border-black flex items-center justify-center shadow-brutal">
@@ -267,7 +275,7 @@ function Explore() {
                       <span className="text-sm text-black font-bold uppercase">PRICE/MB</span>
                     </div>
                     <span className="text-lg font-black text-black p-2 bg-white border-2 border-black shadow-brutal block text-center">
-                      {formatPrice(hotspot.pricePerMB)} ETH
+                      {formatPrice(hotspot.pricePerMB)} U2U
                     </span>
                   </div>
 
@@ -377,7 +385,7 @@ function Explore() {
                     <div className="flex justify-between items-center py-2 border-b-2 border-black">
                       <span className="text-black font-bold uppercase tracking-wide">PRICE PER MB:</span>
                       <span className="text-black font-black p-2 bg-white border-2 border-black">
-                        {formatPrice(selectedHotspot.pricePerMB)} ETH
+                        {formatPrice(selectedHotspot.pricePerMB)} U2U
                       </span>
                     </div>
                     <div className="flex justify-between items-center py-2 border-b-2 border-black">
@@ -392,7 +400,7 @@ function Explore() {
                       <div className="flex justify-between items-center">
                         <span className="text-lg font-black text-black uppercase tracking-wide">TOTAL COST:</span>
                         <span className="text-2xl font-black text-black p-3 bg-green-300 border-3 border-black shadow-brutal">
-                          {formatPrice(calculateTotalPrice(Number(selectedHotspot.id), quotaMB))} ETH
+                          {formatPrice(calculateTotalPrice(Number(selectedHotspot.id), quotaMB))} U2U
                         </span>
                       </div>
                     </div>

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Ticket, Clock, Wifi, Shield, CheckCircle, XCircle, AlertCircle, Loader2, Copy, QrCode, Calendar, Database } from 'lucide-react';
 import { useWifiRegistry } from '../hooks/useWifiRegistry';
 import { useAccount } from 'wagmi';
 
 function Vouchers() {
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const {
     voucher,
     isLoading,
@@ -82,11 +82,11 @@ function Vouchers() {
     }
   };
 
-  const formatDate = (timestamp) => {
+  const formatDate = (timestamp: number | string) => {
     return new Date(Number(timestamp) * 1000).toLocaleString();
   };
 
-  const formatQuota = (quotaMB) => {
+  const formatQuota = (quotaMB: number | string) => {
     const mb = Number(quotaMB);
     if (mb >= 1024) {
       return `${(mb / 1024).toFixed(1)} GB`;
@@ -334,7 +334,7 @@ function Vouchers() {
                         <h4 className="font-black text-black uppercase tracking-wide">RATE</h4>
                       </div>
                       <p className="text-black font-black text-lg mb-2 p-3 bg-white border-3 border-black shadow-brutal text-center">
-                        {formatPrice(hotspotDetails.pricePerMB)} ETH/MB
+                        {formatPrice(hotspotDetails.pricePerMB)} U2U/MB
                       </p>
                       <p className="text-sm text-black font-bold uppercase text-center p-2 bg-purple-200 border-2 border-black">
                         NETWORK RATE

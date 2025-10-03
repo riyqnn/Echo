@@ -75,7 +75,7 @@ function Home() {
             </div>
             <div className="p-6">
               <p className="text-black font-bold uppercase text-sm">
-                MONETIZE YOUR WIFI AND EARN ETH FROM USERS CONNECTING TO YOUR NETWORK
+                MONETIZE YOUR WIFI AND EARN U2U FROM USERS CONNECTING TO YOUR NETWORK
               </p>
             </div>
           </div>
@@ -182,7 +182,7 @@ function Home() {
                 EARN CRYPTO
               </h3>
               <p className="text-black font-bold uppercase text-sm p-4 bg-gray-100 border-4 border-black shadow-brutal">
-                USERS PAY IN ETH TO ACCESS YOUR NETWORK. WITHDRAW ANYTIME
+                USERS PAY IN U2U TO ACCESS YOUR NETWORK. WITHDRAW ANYTIME
               </p>
             </div>
           </div>

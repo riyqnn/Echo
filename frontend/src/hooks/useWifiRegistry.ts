@@ -1,7 +1,7 @@
 // hooks/useWifiRegistry.ts
 import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import { parseEther, formatEther } from 'viem';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import WifiRegistryABI from '../contracts/WifiRegistry.json';
 
 // Contract address
@@ -43,7 +43,9 @@ export const useWifiRegistry = () => {
     ...contractConfig,
     functionName: 'getMyVoucher',
     args: [address],
-    enabled: !!address,
+    query: {
+      enabled: !!address,
+    },
   });
 
   // Check if user's voucher is valid
@@ -51,7 +53,9 @@ export const useWifiRegistry = () => {
     ...contractConfig,
     functionName: 'isVoucherValid',
     args: [address],
-    enabled: !!address,
+    query: {
+      enabled: !!address,
+    },
   });
 
   // Write contract functions
@@ -85,8 +89,8 @@ export const useWifiRegistry = () => {
       }, 2000);
 
       return hash;
-    } catch (err: any) {
-      const errorMsg = err.message || 'Failed to register hotspot';
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to register hotspot';
       setError(errorMsg);
       throw new Error(errorMsg);
     }
@@ -122,8 +126,8 @@ export const useWifiRegistry = () => {
       }, 2000);
 
       return hash;
-    } catch (err: any) {
-      const errorMsg = err.message || 'Failed to buy access';
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to buy access';
       setError(errorMsg);
       throw new Error(errorMsg);
     }
@@ -149,8 +153,8 @@ export const useWifiRegistry = () => {
       }, 2000);
 
       return hash;
-    } catch (err: any) {
-      const errorMsg = err.message || 'Failed to update hotspot status';
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to update hotspot status';
       setError(errorMsg);
       throw new Error(errorMsg);
     }
@@ -175,8 +179,8 @@ export const useWifiRegistry = () => {
       }, 2000);
 
       return hash;
-    } catch (err: any) {
-      const errorMsg = err.message || 'Failed to use voucher';
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to use voucher';
       setError(errorMsg);
       throw new Error(errorMsg);
     }
@@ -197,8 +201,8 @@ export const useWifiRegistry = () => {
       });
 
       return hash;
-    } catch (err: any) {
-      const errorMsg = err.message || 'Failed to withdraw funds';
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to withdraw funds';
       setError(errorMsg);
       throw new Error(errorMsg);
     }
