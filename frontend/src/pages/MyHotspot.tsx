@@ -396,7 +396,7 @@ function MyHotspot() {
                 <div className="flex justify-between items-center py-3 border-b-3 border-black">
                   <span className="text-black font-bold uppercase">PRICE PER MB:</span>
                   <span className="text-black font-black p-2 bg-yellow-200 border-3 border-black">
-                    {formatPrice(selectedHotspot.pricePerMB)} U2U
+                    {formatPrice(BigInt(selectedHotspot.pricePerMB))} U2U
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-3 border-b-3 border-black">

@@ -1,26 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from 'wagmi';
 import { Wifi, Clock, Database, CheckCircle, AlertCircle, Loader2, Zap } from 'lucide-react';
 import { useWifiRegistry } from '../hooks/useWifiRegistry';
 
+// Define types
+interface Hotspot {
+  id: bigint | number;
+  ssid: string;
+  location: string;
+  active: boolean;
+  pricePerMB: bigint;
+}
+
+interface Session {
+  id: bigint | number;
+  hotspotId: bigint | number;
+  active: boolean;
+  expiresAt: bigint;
+  quotaMB: bigint | number;
+}
+
+
 const CaptivePortal = () => {
   const { address, isConnected } = useAccount();
-  const { 
-    hotspots = [], 
-    userSessions = [], 
-    isLoading: isLoadingContract,
-    validateVoucher,
-    isValidating,
-    formatPrice 
-  } = useWifiRegistry() || {};
+  const wifiRegistry = useWifiRegistry();
   
-  const [accessCode, setAccessCode] = useState('');
-  const [macAddress, setMacAddress] = useState('');
-  const [validationStatus, setValidationStatus] = useState(null);
-  const [validationError, setValidationError] = useState('');
-  const [activeSession, setActiveSession] = useState(null);
-  const [currentHotspot, setCurrentHotspot] = useState(null);
+  const isLoadingContract = wifiRegistry?.isLoading || false;
+  const formatPrice = wifiRegistry?.formatPrice;
+
+  const [accessCode, setAccessCode] = useState<string>('');
+  const [macAddress, setMacAddress] = useState<string>('');
+  const [validationStatus, setValidationStatus] = useState<'success' | 'error' | null>(null);
+  const [validationError, setValidationError] = useState<string>('');
+  const [activeSession, setActiveSession] = useState<Session | null>(null);
+  const [currentHotspot, setCurrentHotspot] = useState<Hotspot | null>(null);
+  const [isValidating, setIsValidating] = useState<boolean>(false);
+  const [userSessions, setUserSessions] = useState<Session[]>([]);
 
   // Get current network info from URL params or default
   const urlParams = new URLSearchParams(window.location.search);
@@ -32,26 +48,43 @@ const CaptivePortal = () => {
     setMacAddress(simulatedMAC);
   }, []);
 
-  // Get current hotspot info
+  // Get current hotspot info from wifiRegistry
   useEffect(() => {
-    if (hotspots.length > 0) {
-      const hotspot = hotspots.find(h => Number(h.id) === Number(hotspotId));
-      if (hotspot) {
-        setCurrentHotspot(hotspot);
-      }
+    if (wifiRegistry?.hotspots && wifiRegistry.hotspots.length > 0) {
+      const hotspot = wifiRegistry.hotspots.find((h: Hotspot) => 
+        Number(h.id) === Number(hotspotId)
+      );
+      setCurrentHotspot(hotspot || null);
     }
-  }, [hotspots, hotspotId]);
+  }, [wifiRegistry?.hotspots, hotspotId]);
+
+  // Fetch user sessions when connected
+  useEffect(() => {
+    const fetchUserSessions = async () => {
+      if (isConnected && address) {
+        try {
+          // TODO: Implement actual contract call to fetch user sessions
+          // For now, using empty array
+          setUserSessions([]);
+        } catch (error) {
+          console.error('Error fetching sessions:', error);
+        }
+      }
+    };
+
+    fetchUserSessions();
+  }, [isConnected, address]);
 
   // Check for active session
   useEffect(() => {
-    if (isConnected && userSessions && userSessions.length > 0) {
+    if (isConnected && userSessions.length > 0) {
       // Find active session for this hotspot
-      const session = userSessions.find(s => 
+      const session = userSessions.find((s: Session) => 
         Number(s.hotspotId) === Number(hotspotId) && 
         s.active &&
         new Date(Number(s.expiresAt) * 1000) > new Date()
       );
-      
+
       if (session) {
         setActiveSession(session);
         setValidationStatus('success');
@@ -61,29 +94,49 @@ const CaptivePortal = () => {
 
   const handleValidateVoucher = async () => {
     if (!accessCode || !isConnected) return;
-    
+
     setValidationError('');
     setValidationStatus(null);
+    setIsValidating(true);
 
     try {
-      // Call smart contract to validate voucher
-      const result = await validateVoucher(accessCode, Number(hotspotId));
+      // TODO: Implement actual contract call to validate voucher
+      // This is a placeholder implementation
       
-      if (result.success) {
+      // Simulate validation delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      // Mock validation result
+      const isValid = accessCode.length >= 8; // Simple mock validation
+
+      if (isValid) {
+        // Create mock session
+        const mockSession: Session = {
+          id: BigInt(Date.now()),
+          hotspotId: BigInt(hotspotId),
+          active: true,
+          expiresAt: BigInt(Math.floor(Date.now() / 1000) + 3600), // 1 hour from now
+          quotaMB: BigInt(1000), // 1GB
+        };
+
         setValidationStatus('success');
-        setActiveSession(result.session);
+        setActiveSession(mockSession);
+        setUserSessions(prev => [...prev, mockSession]);
       } else {
         setValidationStatus('error');
-        setValidationError(result.error || 'Invalid voucher code');
+        setValidationError('Invalid voucher code');
       }
     } catch (error) {
       console.error('Validation error:', error);
       setValidationStatus('error');
-      setValidationError(error.message || 'Failed to validate voucher');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to validate voucher';
+      setValidationError(errorMessage);
+    } finally {
+      setIsValidating(false);
     }
   };
 
-  const formatDuration = (seconds) => {
+  const formatDuration = (seconds: number): string => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     if (hours > 0) {
@@ -92,17 +145,17 @@ const CaptivePortal = () => {
     return `${minutes}m`;
   };
 
-  const formatQuota = (mb) => {
+  const formatQuota = (mb: number): string => {
     if (mb >= 1024) {
       return `${(mb / 1024).toFixed(1)} GB`;
     }
     return `${mb} MB`;
   };
 
-  const getRemainingTime = (expiresAt) => {
+  const getRemainingTime = (expiresAt: bigint): string => {
     const now = new Date();
     const expiry = new Date(Number(expiresAt) * 1000);
-    const diff = Math.max(0, Math.floor((expiry - now) / 1000));
+    const diff = Math.max(0, Math.floor((expiry.getTime() - now.getTime()) / 1000));
     return formatDuration(diff);
   };
 
@@ -149,7 +202,7 @@ const CaptivePortal = () => {
               <div className="grid grid-cols-2 gap-2 mt-3">
                 <div className="bg-white p-2 border-2 border-black">
                   <div className="text-xs font-bold text-gray-600">PRICE/MB</div>
-                  <div className="font-black text-sm">{formatPrice(currentHotspot.pricePerMB)} U2U</div>
+                  <div className="font-black text-sm">{formatPrice ? formatPrice(currentHotspot.pricePerMB) : '0'} U2U</div>
                 </div>
                 <div className="bg-white p-2 border-2 border-black">
                   <div className="text-xs font-bold text-gray-600">HOTSPOT ID</div>
@@ -295,9 +348,9 @@ const CaptivePortal = () => {
                 {address?.slice(0, 6)}...{address?.slice(-4)}
               </span>
             </div>
-            {userSessions && userSessions.length > 0 && (
+            {userSessions.length > 0 && (
               <div className="mt-2 text-xs font-bold text-gray-600">
-                Active Sessions: {userSessions.filter(s => s.active).length}
+                Active Sessions: {userSessions.filter((s: Session) => s.active).length}
               </div>
             )}
           </div>

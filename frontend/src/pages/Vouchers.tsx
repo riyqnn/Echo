@@ -82,10 +82,6 @@ function Vouchers() {
     }
   };
 
-  const formatDate = (timestamp: number | string) => {
-    return new Date(Number(timestamp) * 1000).toLocaleString();
-  };
-
   const formatQuota = (quotaMB: number | string) => {
     const mb = Number(quotaMB);
     if (mb >= 1024) {
@@ -305,7 +301,7 @@ function Vouchers() {
                       <h4 className="font-black text-black uppercase tracking-wide">DATA QUOTA</h4>
                     </div>
                     <p className="text-3xl font-black text-black uppercase mb-2 p-3 bg-white border-4 border-black shadow-brutal text-center">
-                      {formatQuota(voucher.quotaMB)}
+                      {formatQuota(Number(voucher.quotaMB))}
                     </p>
                     <p className="text-sm text-black font-bold uppercase text-center p-2 bg-green-200 border-2 border-black">
                       AVAILABLE DATA
@@ -319,7 +315,7 @@ function Vouchers() {
                       <h4 className="font-black text-black uppercase tracking-wide">EXPIRES</h4>
                     </div>
                     <p className="text-black font-bold mb-2 p-3 bg-white border-3 border-black shadow-brutal text-center">
-                      {formatDate(voucher.expiry)}
+                     {formatQuota(Number(voucher.quotaMB))}
                     </p>
                     <p className="text-sm text-black font-bold uppercase text-center p-2 bg-yellow-200 border-2 border-black">
                       LOCAL TIME

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useWifiRegistry } from '../hooks/useWifiRegistry';
 import { useAccount } from 'wagmi';
 import { Wifi, MapPin, DollarSign, Loader2, CheckCircle, AlertCircle, Zap } from 'lucide-react';
@@ -15,15 +15,15 @@ function Mint() {
   const [success, setSuccess] = useState(false);
   const [transactionHash, setTransactionHash] = useState('');
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    };
 
-  const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     
     if (!formData.ssid || !formData.location || !formData.pricePerMB) {
@@ -37,7 +37,7 @@ function Mint() {
         formData.pricePerMB
       );
       
-      if (hash) {
+      if (hash !== undefined) {
         setTransactionHash(hash);
         setSuccess(true);
         
